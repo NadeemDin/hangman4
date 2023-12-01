@@ -1,7 +1,7 @@
 import random
 
 # TO TEST, LIMIT TO ONE WORD
-word_list = ["apple","banana","mango","pineapple","cherry","avocado"]
+word_list = ["pineapple","apple","cherry","banana","mango","avocado"]
 
 #MESSAGES USING GENERATED ASCII ART
 
@@ -38,7 +38,7 @@ class Hangman:
         self.word_list = word_list
         self.word = random.choice(word_list)
         self.word_guessed = list("_"* len(self.word))
-        self.num_letters = int(len(set(self.word))+1)
+        self.num_letters = len(self.word) #use of set() would give unique chars but not req due to game win/loss cond.
         self.num_lives = num_lives
         self.list_of_guesses = []
 
@@ -132,9 +132,9 @@ class Hangman:
                 if letter == guess:
                     self.word_guessed[position] = letter
                     #print(self.word_guessed)
-                    self.num_letters -= 1
+                    self.num_letters -= 1 #this is why set not required as this reduces num_letters by one 
                     #print(self.num_letters)
-
+                
 
         else:
             self.num_lives -= 1
@@ -151,7 +151,7 @@ class Hangman:
     def ask_for_input(self):
         # checks to see if input is valid. single letter. isalpha only.
         # feeds check_guess method.
-
+        
         while self.num_lives > 0 and self.num_letters > 0:
             guess = str(input("\nGuess a single letter: "))
             if len(guess) != 1 or guess.isalpha() == False:
@@ -170,18 +170,28 @@ def play_game(word_list):
     # defines lives, creates instance of class game, defines rules for lives/playthrough.
     num_lives = 5 # min lives = 1 , max lives = 6
     game = Hangman(word_list, num_lives)
+    print(f"\n{game.word_guessed}\n")
+    
     
     while True:
         game.ask_for_input()
         if game.num_lives == 0:
             print(game_over_message)
             print(f"The word was {game.word}\n")
-            break
+            play_again = input("Do you want to play again? (yes/no): ").lower()
+            if play_again == 'yes':
+                play_game(word_list)
+            else:
+                print("Goodbye!")
+                return
         elif game.num_letters == 0:
             print(winning_message)
-            break
-        
-   
+            play_again = input("Do you want to play again? (yes/no): ").lower()
+            if play_again == 'yes':
+                play_game(word_list)
+            else:
+                print("Goodbye!")
+                return
 
    
         
